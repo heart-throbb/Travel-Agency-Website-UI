@@ -20,13 +20,31 @@ const flightsData = [
 
 export default function Flights() {
   const [flights] = useState(flightsData);
+  const [bookings, setBookings] = useState([]);
+
+  const handleBookFlight = (flight) => {
+    const newBooking = {
+      ...flight,
+      date: new Date().toISOString().split("T")[0],
+    };
+    setBookings([...bookings, newBooking]);
+    localStorage.setItem(
+      "bookedFlights",
+      JSON.stringify([...bookings, newBooking])
+    );
+    alert("Flight booked successfully!");
+  };
 
   return (
-    <div className="p-6">
-      <h2 className="text-3xl font-bold mb-4">Flights</h2>
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="container mx-auto py-8">
+      <h2 className="text-3xl font-bold mb-6">Flights</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {flights.map((flight) => (
-          <FlightCard key={flight.id} flight={flight} />
+          <FlightCard
+            key={flight.id}
+            flight={flight}
+            onBookNow={handleBookFlight}
+          />
         ))}
       </div>
     </div>
