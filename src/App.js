@@ -12,6 +12,8 @@ import Chauffeurs from "./pages/ChauffeursPage";
 import GuidedTours from "./pages/GuidedToursPage";
 import FlightBookingPage from "./pages/FlightBookingPage";
 import HotelBookingPage from "./pages/HotelBookingPage";
+import TransportBookingPage from "./pages/TransportBookingPage";
+
 function App() {
   return (
     <Router>
@@ -29,6 +31,7 @@ function App() {
         <Route path="/guided-tours" element={<GuidedTours />} />
         <Route path="/book-flight/:id" element={<FlightBookingPage />} />
         <Route path="/hotel-booking" element={<HotelBookingPage />} />
+        <Route path="/book-transport" element={<TransportBookingPage />} />
       </Routes>
     </Router>
   );

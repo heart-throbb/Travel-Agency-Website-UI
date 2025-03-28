@@ -23,6 +23,7 @@ export default function HotelBookingPage() {
   const handleBooking = (e) => {
     e.preventDefault();
 
+    // Validate if all fields are filled
     if (
       !formData.name ||
       !formData.email ||
@@ -38,8 +39,32 @@ export default function HotelBookingPage() {
       return;
     }
 
+    // Get today's date (formatted as YYYY-MM-DD)
+    const today = new Date().toISOString().split("T")[0];
+
+    // Validate check-in date (must not be in the past)
+    if (formData.checkIn < today) {
+      Swal.fire({
+        icon: "error",
+        title: "Invalid Check-In Date!",
+        text: "Check-in date cannot be in the past. Please select a valid date.",
+      });
+      return;
+    }
+
+    // Validate check-out date (must be after check-in)
+    if (formData.checkOut <= formData.checkIn) {
+      Swal.fire({
+        icon: "error",
+        title: "Invalid Check-Out Date!",
+        text: "Check-out date must be after the check-in date.",
+      });
+      return;
+    }
+
+    // Confirmation prompt
     Swal.fire({
-      title: "Booking Confirmed!",
+      title: "Are you sure?",
       html: `
         <b>${hotel.name}</b><br>
         📍 ${hotel.location} <br>
@@ -51,11 +76,44 @@ export default function HotelBookingPage() {
           formData.checkOut
         )}
       `,
-      icon: "success",
+      icon: "question",
+      showCancelButton: true,
       confirmButtonColor: "#28a745",
-      confirmButtonText: "Great!",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, Confirm!",
+      cancelButtonText: "No, Cancel",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: "Booking Confirmed! 🎉",
+          html: `
+            <b>${hotel.name}</b><br>
+            📍 ${hotel.location} <br>
+            🏨 <b>Stay From:</b> ${formData.checkIn} <br>
+            🏨 <b>Stay To:</b> ${formData.checkOut} <br>
+            💰 <b>Total Cost:</b> $${calculateTotalCost(
+              hotel.price,
+              formData.checkIn,
+              formData.checkOut
+            )}
+          `,
+          icon: "success",
+          confirmButtonColor: "#28a745",
+          confirmButtonText: "Awesome!",
+        });
+      } else {
+        Swal.fire({
+          icon: "info",
+          title: "Booking Cancelled",
+          text: "Your hotel booking was not completed.",
+          confirmButtonColor: "#3085d6",
+          confirmButtonText: "Okay",
+        });
+      }
     });
   };
+
+  // Function to calculate total cost based on nights
   const calculateTotalCost = (pricePerNight, checkIn, checkOut) => {
     const start = new Date(checkIn);
     const end = new Date(checkOut);
@@ -65,6 +123,7 @@ export default function HotelBookingPage() {
     );
     return nights * pricePerNight;
   };
+
   return (
     <div className="container mx-auto p-6">
       <h2 className="text-3xl font-bold mb-4">Hotel Booking</h2>

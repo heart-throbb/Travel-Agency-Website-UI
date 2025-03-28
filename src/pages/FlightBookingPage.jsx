@@ -41,18 +41,54 @@ export default function FlightBookingPage() {
       return;
     }
 
-    // Show success alert with flight details
+    // Get today's date (formatted as YYYY-MM-DD)
+    const today = new Date().toISOString().split("T")[0];
+
+    // Check if the selected date is in the past
+    if (formData.date < today) {
+      Swal.fire({
+        icon: "error",
+        title: "Invalid Date!",
+        text: "The departure date cannot be in the past. Please select a valid date.",
+      });
+      return;
+    }
+
+    // Show confirmation prompt
     Swal.fire({
-      title: "Flight Booked Successfully! ✈️",
-      html: `
-        <b>${source} → ${destination}</b> <br>
-        📅 <b>Departure Date:</b> ${formData.date} <br>
-        💰 <b>Ticket Price:</b> $${price} <br>
-        🛫 <b>Passenger Name:</b> ${formData.name}
-      `,
-      icon: "success",
+      title: "Are you sure?",
+      text: `Do you want to book a flight from ${source} to ${destination} on ${formData.date}?`,
+      icon: "question",
+      showCancelButton: true,
       confirmButtonColor: "#28a745",
-      confirmButtonText: "Awesome!",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, Book it!",
+      cancelButtonText: "No, Cancel",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // If confirmed, show success alert
+        Swal.fire({
+          title: "Flight Booked Successfully! ✈️",
+          html: `
+            <b>${source} → ${destination}</b> <br>
+            📅 <b>Departure Date:</b> ${formData.date} <br>
+            💰 <b>Ticket Price:</b> $${price} <br>
+            🛫 <b>Passenger Name:</b> ${formData.name}
+          `,
+          icon: "success",
+          confirmButtonColor: "#28a745",
+          confirmButtonText: "Awesome!",
+        });
+      } else {
+        // If canceled, show cancellation message
+        Swal.fire({
+          icon: "info",
+          title: "Booking Cancelled",
+          text: "Your flight booking was not completed.",
+          confirmButtonColor: "#3085d6",
+          confirmButtonText: "Okay",
+        });
+      }
     });
   };
 
