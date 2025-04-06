@@ -5,68 +5,160 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <nav className="p-4 flex justify-between items-center shadow-md bg-white">
-      {/* Logo */}
-      <Link to="/" className="text-3xl font-bold italic font-[Lobster]">
-        Travel Agency
-      </Link>
-
-      {/* Mobile Menu Button */}
-      <button className="md:hidden text-xl" onClick={() => setIsOpen(!isOpen)}>
-        ☰
-      </button>
-
-      {/* Navigation Links */}
-      <div
-        className={`md:flex space-x-4 ${isOpen ? "block" : "hidden"} 
-        absolute md:relative top-16 md:top-0 left-0 w-full md:w-auto bg-white md:bg-transparent 
-        shadow-md md:shadow-none p-4 md:p-0`}
-      >
-        <Link
-          to="/flights"
-          className="block md:inline-block py-2 hover:text-blue-500"
-        >
-          Flights
-        </Link>
-        <Link
-          to="/hotels"
-          className="block md:inline-block py-2 hover:text-blue-500"
-        >
-          Hotels
-        </Link>
-        <Link
-          to="/transport"
-          className="block md:inline-block py-2 hover:text-blue-500"
-        >
-          Transport
-        </Link>
-        <Link
-          to="/services"
-          className="block md:inline-block py-2 hover:text-blue-500"
-        >
-          Services
-        </Link>
-        <Link
-          to="/booking"
-          className="block md:inline-block py-2 hover:text-blue-500"
-        >
-          Booking
-        </Link>
-
-        {/* Buttons: Stacked on mobile, inline on larger screens */}
-        <div className="flex flex-col md:flex-row md:space-x-2 mt-2 md:mt-0">
+    <nav className="bg-white shadow-md w-full">
+      <div className="px-4 sm:px-6 py-3 w-full">
+        <div className="flex justify-between items-center w-full">
+          {/* Logo - Left aligned */}
           <Link
-            to="/login"
-            className="px-6 py-2 border border-gray-300 rounded hover:bg-gray-100 transition text-center w-fit mx-auto md:mx-0"
+            to="/"
+            className="text-3xl font-bold italic font-[Lobster] whitespace-nowrap"
           >
-            Login
+            Travel Agency
           </Link>
-          <Link
-            to="/signup"
-            className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 text-center w-fit mx-auto md:mx-0 mt-2 md:mt-0"
+
+          {/* Desktop Navigation - Right aligned with all elements */}
+          <div className="hidden md:flex items-center space-x-6">
+            <Link
+              to="/flights"
+              className="text-gray-700 hover:text-blue-500 transition whitespace-nowrap"
+            >
+              Flights
+            </Link>
+            <Link
+              to="/hotels"
+              className="text-gray-700 hover:text-blue-500 transition whitespace-nowrap"
+            >
+              Hotels
+            </Link>
+            <Link
+              to="/transport"
+              className="text-gray-700 hover:text-blue-500 transition whitespace-nowrap"
+            >
+              Transport
+            </Link>
+            <Link
+              to="/services"
+              className="text-gray-700 hover:text-blue-500 transition whitespace-nowrap"
+            >
+              Services
+            </Link>
+            <Link
+              to="/booking"
+              className="text-gray-700 hover:text-blue-500 transition whitespace-nowrap"
+            >
+              Booking
+            </Link>
+            <Link
+              to="/login"
+              className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-100 transition whitespace-nowrap"
+            >
+              Login
+            </Link>
+            <Link
+              to="/signup"
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition whitespace-nowrap"
+            >
+              Signup
+            </Link>
+          </div>
+
+          {/* Mobile Menu Button */}
+          <button
+            className="md:hidden text-gray-700 focus:outline-none"
+            onClick={() => setIsOpen(!isOpen)}
+            aria-label="Toggle menu"
           >
-            Signup
-          </Link>
+            {isOpen ? (
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            ) : (
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              </svg>
+            )}
+          </button>
+        </div>
+
+        {/* Mobile Menu Dropdown */}
+        <div
+          className={`md:hidden transition-all duration-300 ease-in-out overflow-hidden ${
+            isOpen ? "max-h-screen" : "max-h-0"
+          }`}
+        >
+          <div className="flex flex-col space-y-3 py-3">
+            <Link
+              to="/flights"
+              className="px-3 py-2 hover:bg-blue-50 rounded transition-colors"
+              onClick={() => setIsOpen(false)}
+            >
+              Flights
+            </Link>
+            <Link
+              to="/hotels"
+              className="px-3 py-2 hover:bg-blue-50 rounded transition-colors"
+              onClick={() => setIsOpen(false)}
+            >
+              Hotels
+            </Link>
+            <Link
+              to="/transport"
+              className="px-3 py-2 hover:bg-blue-50 rounded transition-colors"
+              onClick={() => setIsOpen(false)}
+            >
+              Transport
+            </Link>
+            <Link
+              to="/services"
+              className="px-3 py-2 hover:bg-blue-50 rounded transition-colors"
+              onClick={() => setIsOpen(false)}
+            >
+              Services
+            </Link>
+            <Link
+              to="/booking"
+              className="px-3 py-2 hover:bg-blue-50 rounded transition-colors"
+              onClick={() => setIsOpen(false)}
+            >
+              Booking
+            </Link>
+            <div className="border-t pt-3">
+              <Link
+                to="/login"
+                className="block w-full px-3 py-2 text-center border border-gray-300 rounded hover:bg-gray-100 transition mb-2"
+                onClick={() => setIsOpen(false)}
+              >
+                Login
+              </Link>
+              <Link
+                to="/signup"
+                className="block w-full px-3 py-2 text-center bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+                onClick={() => setIsOpen(false)}
+              >
+                Signup
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </nav>

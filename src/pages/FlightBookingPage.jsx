@@ -78,6 +78,8 @@ export default function FlightBookingPage() {
           icon: "success",
           confirmButtonColor: "#28a745",
           confirmButtonText: "Awesome!",
+        }).then(() => {
+          navigate("/");
         });
       } else {
         // If canceled, show cancellation message
@@ -93,67 +95,83 @@ export default function FlightBookingPage() {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen">
-      <div className="bg-white shadow-lg rounded-lg p-6 max-w-md w-full">
-        <h2 className="text-2xl font-bold text-gray-800">
-          {source} → {destination}
-        </h2>
-        <p className="text-blue-600 text-lg font-semibold">${price}</p>
-
-        <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+    <div className="flex justify-center items-center min-h-screen bg-gray-50 py-8">
+      <div className="bg-white shadow-lg rounded-xl p-8 max-w-md w-full mx-4">
+        <div className="flex justify-between items-start mb-6">
           <div>
+            <h2 className="text-2xl font-bold text-gray-800">
+              {source} → {destination}
+            </h2>
+            <p className="text-blue-600 text-lg font-semibold">${price}</p>
+          </div>
+          <div className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">
+            Economy
+          </div>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-1">
+            <label className="block text-sm font-medium text-gray-700">
+              Full Name
+            </label>
             <input
               type="text"
               name="name"
-              placeholder="Full Name"
+              placeholder="John Doe"
               value={formData.name}
               onChange={handleChange}
-              className="w-full p-3 border rounded-md focus:ring focus:ring-blue-300"
+              className="w-full p-3 border rounded-lg focus:ring focus:ring-blue-300 focus:border-blue-500"
               required
             />
           </div>
 
-          <div>
+          <div className="space-y-1">
+            <label className="block text-sm font-medium text-gray-700">
+              Email
+            </label>
             <input
               type="email"
               name="email"
-              placeholder="Email"
+              placeholder="john@example.com"
               value={formData.email}
               onChange={handleChange}
-              className="w-full p-3 border rounded-md focus:ring focus:ring-blue-300"
+              className="w-full p-3 border rounded-lg focus:ring focus:ring-blue-300 focus:border-blue-500"
               required
             />
           </div>
 
-          <div>
+          <div className="space-y-1">
+            <label className="block text-sm font-medium text-gray-700">
+              Phone Number
+            </label>
             <input
               type="tel"
               name="phone"
-              placeholder="Phone Number"
+              placeholder="+1 (123) 456-7890"
               value={formData.phone}
               onChange={handleChange}
-              className="w-full p-3 border rounded-md focus:ring focus:ring-blue-300"
+              className="w-full p-3 border rounded-lg focus:ring focus:ring-blue-300 focus:border-blue-500"
               required
             />
           </div>
 
-          <div>
-            <label className="block text-lg font-semibold text-gray-700">
-              Departure Date:
+          <div className="space-y-1">
+            <label className="block text-sm font-medium text-gray-700">
+              Departure Date
             </label>
             <input
               type="date"
               name="date"
               value={formData.date}
               onChange={handleChange}
-              className="w-full p-3 border rounded-md focus:ring focus:ring-blue-300"
+              className="w-full p-3 border rounded-lg focus:ring focus:ring-blue-300 focus:border-blue-500"
               required
             />
           </div>
 
           <button
             type="submit"
-            className="w-full bg-green-600 text-white py-3 px-4 rounded-md hover:bg-green-700 transition"
+            className="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-medium py-3 px-4 rounded-lg transition duration-200 mt-6"
           >
             Confirm Booking
           </button>

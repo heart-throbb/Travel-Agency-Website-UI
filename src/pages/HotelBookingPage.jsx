@@ -6,24 +6,32 @@ export default function HotelBookingPage() {
   const location = useLocation();
   const hotel = location.state?.hotel;
 
-  // State for user input
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     phone: "",
     checkIn: "",
     checkOut: "",
+    guests: 1,
   });
 
-  // Handle input changes
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const calculateTotalCost = (pricePerNight, checkIn, checkOut) => {
+    const start = new Date(checkIn);
+    const end = new Date(checkOut);
+    const nights = Math.max(
+      1,
+      Math.ceil((end - start) / (1000 * 60 * 60 * 24))
+    );
+    return nights * pricePerNight;
   };
 
   const handleBooking = (e) => {
     e.preventDefault();
 
-    // Validate if all fields are filled
     if (
       !formData.name ||
       !formData.email ||
@@ -39,159 +47,200 @@ export default function HotelBookingPage() {
       return;
     }
 
-    // Get today's date (formatted as YYYY-MM-DD)
     const today = new Date().toISOString().split("T")[0];
 
-    // Validate check-in date (must not be in the past)
     if (formData.checkIn < today) {
       Swal.fire({
         icon: "error",
         title: "Invalid Check-In Date!",
-        text: "Check-in date cannot be in the past. Please select a valid date.",
+        text: "Check-in date cannot be in the past.",
       });
       return;
     }
 
-    // Validate check-out date (must be after check-in)
     if (formData.checkOut <= formData.checkIn) {
       Swal.fire({
         icon: "error",
         title: "Invalid Check-Out Date!",
-        text: "Check-out date must be after the check-in date.",
+        text: "Check-out date must be after check-in date.",
       });
       return;
     }
 
-    // Confirmation prompt
+    const totalCost = calculateTotalCost(
+      hotel.price,
+      formData.checkIn,
+      formData.checkOut
+    );
+
     Swal.fire({
-      title: "Are you sure?",
+      title: "Confirm Your Booking",
       html: `
-        <b>${hotel.name}</b><br>
-        📍 ${hotel.location} <br>
-        🏨 <b>Stay From:</b> ${formData.checkIn} <br>
-        🏨 <b>Stay To:</b> ${formData.checkOut} <br>
-        💰 <b>Total Cost:</b> $${calculateTotalCost(
-          hotel.price,
-          formData.checkIn,
-          formData.checkOut
-        )}
+        <div class="text-left">
+          <h3 class="font-bold text-lg">${hotel.name}</h3>
+          <p class="text-gray-600">${hotel.location}</p>
+          <div class="my-3">
+            <p><b>Check-in:</b> ${formData.checkIn}</p>
+            <p><b>Check-out:</b> ${formData.checkOut}</p>
+            <p><b>Guests:</b> ${formData.guests}</p>
+          </div>
+          <p class="text-xl font-bold text-blue-600">Total: $${totalCost}</p>
+        </div>
       `,
       icon: "question",
       showCancelButton: true,
       confirmButtonColor: "#28a745",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, Confirm!",
-      cancelButtonText: "No, Cancel",
+      confirmButtonText: "Confirm Booking",
+      cancelButtonText: "Cancel",
     }).then((result) => {
       if (result.isConfirmed) {
         Swal.fire({
-          title: "Booking Confirmed! 🎉",
+          title: "Booking Confirmed!",
           html: `
-            <b>${hotel.name}</b><br>
-            📍 ${hotel.location} <br>
-            🏨 <b>Stay From:</b> ${formData.checkIn} <br>
-            🏨 <b>Stay To:</b> ${formData.checkOut} <br>
-            💰 <b>Total Cost:</b> $${calculateTotalCost(
-              hotel.price,
-              formData.checkIn,
-              formData.checkOut
-            )}
+            <div class="text-left">
+              <h3 class="font-bold text-lg">${hotel.name}</h3>
+              <p class="text-gray-600">${hotel.location}</p>
+              <div class="my-3">
+                <p><b>Check-in:</b> ${formData.checkIn}</p>
+                <p><b>Check-out:</b> ${formData.checkOut}</p>
+                <p><b>Guests:</b> ${formData.guests}</p>
+              </div>
+              <p class="text-xl font-bold text-blue-600">Total: $${totalCost}</p>
+              <p class="mt-3">Confirmation sent to ${formData.email}</p>
+            </div>
           `,
           icon: "success",
-          confirmButtonColor: "#28a745",
-          confirmButtonText: "Awesome!",
-        });
-      } else {
-        Swal.fire({
-          icon: "info",
-          title: "Booking Cancelled",
-          text: "Your hotel booking was not completed.",
-          confirmButtonColor: "#3085d6",
-          confirmButtonText: "Okay",
+          confirmButtonText: "Great!",
         });
       }
     });
   };
 
-  // Function to calculate total cost based on nights
-  const calculateTotalCost = (pricePerNight, checkIn, checkOut) => {
-    const start = new Date(checkIn);
-    const end = new Date(checkOut);
-    const nights = Math.max(
-      1,
-      Math.ceil((end - start) / (1000 * 60 * 60 * 24))
-    );
-    return nights * pricePerNight;
-  };
-
   return (
-    <div className="container mx-auto p-6">
-      <h2 className="text-3xl font-bold mb-4">Hotel Booking</h2>
-      {hotel ? (
-        <div className="border rounded-lg p-6 shadow-lg max-w-lg mx-auto">
-          <h3 className="text-2xl font-semibold">{hotel.name}</h3>
-          <p className="text-gray-600">{hotel.location}</p>
-          <p className="text-blue-500 font-bold">${hotel.price}/night</p>
-          <p className="text-yellow-500">⭐ {hotel.rating}</p>
+    <div className="flex justify-center items-center min-h-screen bg-gray-50 py-8">
+      <div className="bg-white shadow-lg rounded-xl p-8 max-w-md w-full mx-4">
+        {hotel ? (
+          <>
+            <div className="flex justify-between items-start mb-6">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-800">
+                  {hotel.name}
+                </h2>
+                <p className="text-gray-600">{hotel.location}</p>
+                <p className="text-blue-600 text-lg font-semibold">
+                  ${hotel.price}/night
+                </p>
+              </div>
+              <div className="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded">
+                ⭐ {hotel.rating}
+              </div>
+            </div>
 
-          {/* Booking Form */}
-          <form className="mt-4 space-y-4" onSubmit={handleBooking}>
-            <input
-              type="text"
-              name="name"
-              placeholder="Full Name"
-              value={formData.name}
-              onChange={handleChange}
-              className="w-full border p-2 rounded-md"
-              required
-            />
-            <input
-              type="email"
-              name="email"
-              placeholder="Email"
-              value={formData.email}
-              onChange={handleChange}
-              className="w-full border p-2 rounded-md"
-              required
-            />
-            <input
-              type="tel"
-              name="phone"
-              placeholder="Phone Number"
-              value={formData.phone}
-              onChange={handleChange}
-              className="w-full border p-2 rounded-md"
-              required
-            />
-            <label className="block">Check-In Date:</label>
-            <input
-              type="date"
-              name="checkIn"
-              value={formData.checkIn}
-              onChange={handleChange}
-              className="w-full border p-2 rounded-md"
-              required
-            />
-            <label className="block">Check-Out Date:</label>
-            <input
-              type="date"
-              name="checkOut"
-              value={formData.checkOut}
-              onChange={handleChange}
-              className="w-full border p-2 rounded-md"
-              required
-            />
-            <button
-              type="submit"
-              className="w-full bg-green-500 text-white p-2 rounded-md hover:bg-green-600 transition"
-            >
-              Confirm Booking
-            </button>
-          </form>
-        </div>
-      ) : (
-        <p className="text-red-500">No hotel selected.</p>
-      )}
+            <form onSubmit={handleBooking} className="space-y-4">
+              <div className="space-y-1">
+                <label className="block text-sm font-medium text-gray-700">
+                  Full Name
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  required
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="block text-sm font-medium text-gray-700">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  required
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="block text-sm font-medium text-gray-700">
+                  Phone
+                </label>
+                <input
+                  type="tel"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Check-in
+                  </label>
+                  <input
+                    type="date"
+                    name="checkIn"
+                    value={formData.checkIn}
+                    onChange={handleChange}
+                    className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Check-out
+                  </label>
+                  <input
+                    type="date"
+                    name="checkOut"
+                    value={formData.checkOut}
+                    onChange={handleChange}
+                    className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="block text-sm font-medium text-gray-700">
+                  Guests
+                </label>
+                <select
+                  name="guests"
+                  value={formData.guests}
+                  onChange={handleChange}
+                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  {[1, 2, 3, 4, 5, 6].map((num) => (
+                    <option key={num} value={num}>
+                      {num} {num === 1 ? "Guest" : "Guests"}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <button
+                type="submit"
+                className="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-medium py-3 px-4 rounded-lg transition duration-200 mt-6"
+              >
+                Complete Booking
+              </button>
+            </form>
+          </>
+        ) : (
+          <p className="text-red-500 text-center">
+            No hotel selected. Please go back and select a hotel.
+          </p>
+        )}
+      </div>
     </div>
   );
 }
